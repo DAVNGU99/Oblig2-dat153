@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 
-@Entity(tableName = "quiz_object")
+@Entity(tableName = "quiz_objects")
 data class QuizObject(
 
     @PrimaryKey(autoGenerate = true)
