@@ -61,5 +61,6 @@ dependencies {
     implementation(libs.room.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.compose.material.icons.extended)
     ksp(libs.room.compiler)
 }
