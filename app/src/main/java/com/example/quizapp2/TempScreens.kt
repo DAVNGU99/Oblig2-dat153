@@ -15,12 +15,7 @@ fun HomeScreen() {
     }
 }
 
-@Composable
-fun GalleryScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Gallery Screen")
-    }
-}
+
 
 @Composable
 fun PlayScreen() {

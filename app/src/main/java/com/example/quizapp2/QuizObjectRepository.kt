@@ -24,6 +24,10 @@ class QuizObjectRepository (private val quizObjectDAO: QuizObjectDAO){
         }
     }
 
+    suspend fun isEmpty(): Boolean{
+        return quizObjectDAO.getCount() == 0
+    }
+
 //    //maybe not necessary, but i just wanted to try it out
 //    fun findObjectQuiz(name: String) {
 //        coroutineScope.launch (Dispatchers.IO){

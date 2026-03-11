@@ -18,5 +18,10 @@ interface QuizObjectDAO {
     fun findQuizObject(name: String): List<QuizObject>
 
     @Query("DELETE FROM quiz_objects WHERE name = :name")
-    fun removeQuizObject(name: String)  // ← no return type
+    fun removeQuizObject(name: String)
+
+
+    @Query("SELECT COUNT(*) FROM quiz_objects")
+    fun getCount() : Int
+
 }
