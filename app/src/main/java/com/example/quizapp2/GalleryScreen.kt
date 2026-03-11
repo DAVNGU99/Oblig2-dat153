@@ -72,7 +72,8 @@ fun GalleryScreen(quizViewModel: QuizObjectViewModel = viewModel()) {
         }
     }
 
-    Scaffold(
+    Scaffold(modifier = Modifier.background(Color(0xFFedede9)),
+        containerColor = Color(0xFFedede9),
         topBar = {
             TopAppBar(
                 title = { Text("Gallery") },
@@ -86,7 +87,7 @@ fun GalleryScreen(quizViewModel: QuizObjectViewModel = viewModel()) {
             )
         }
     ) { padding ->
-        LazyColumn(modifier = Modifier.padding(padding)) {
+        LazyColumn(modifier = Modifier.padding(padding).background(Color(0xFFedede9))) {
             items(items = quizObjects, key = { it.id }) { quizObject ->
                 GalleryRow(
                     quizObject = quizObject,

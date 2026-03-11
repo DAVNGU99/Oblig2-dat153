@@ -17,9 +17,4 @@ fun HomeScreen() {
 
 
 
-@Composable
-fun PlayScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Play Screen")
-    }
-}
+
