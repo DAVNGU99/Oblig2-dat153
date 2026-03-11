@@ -17,13 +17,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import kotlinx.serialization.Serializable
 
 //litt som en enum + singleton
-@Serializable
+
 sealed class Navigation(val route: String) {
-    @Serializable
+
     object Home : Navigation("home")
-    @Serializable
+
     object Gallery : Navigation("gallery")
-    @Serializable
+
     object Play : Navigation("play")
 }
 
@@ -55,7 +55,7 @@ fun BottomNavigationBar(navController: NavController) {
             NavigationBarItem(
                 selected = currentRoute == navItem.route,
                 onClick = {
-                    navController.navigate(navItem.navRoute) {
+                    navController.navigate(navItem.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
