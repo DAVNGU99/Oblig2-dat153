@@ -39,10 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import kotlin.collections.emptyList
-
-class GalleryScreens {
-}
-
+import androidx.compose.ui.platform.LocalContext
 // gets the viewmodel.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,6 +47,9 @@ fun GalleryScreen(quizViewModel: QuizObjectViewModel = viewModel()) {
 
     // observe the list from the database
     val quizObjects by quizViewModel.allQuizObjects.observeAsState(emptyList())
+
+    //persisting permission for the images
+    val localContext = LocalContext.current
 
     // dialog state
     var showAddDialog by remember { mutableStateOf(false) }
@@ -61,6 +61,11 @@ fun GalleryScreen(quizViewModel: QuizObjectViewModel = viewModel()) {
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
         if (uri != null) {
+            // take persistent permission so URI survives app restart
+            localContext.contentResolver.takePersistableUriPermission(
+                uri,
+                android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
             pendingUri = uri
             nameInput = ""
             showAddDialog = true
