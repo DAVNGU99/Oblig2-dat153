@@ -1,4 +1,4 @@
-package com.example.quizapp2
+package com.example.quizapp2.Model
 
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.CoroutineScope

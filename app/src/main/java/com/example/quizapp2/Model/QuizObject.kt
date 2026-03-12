@@ -1,4 +1,4 @@
-package com.example.quizapp2
+package com.example.quizapp2.Model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

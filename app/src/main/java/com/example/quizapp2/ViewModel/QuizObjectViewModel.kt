@@ -1,4 +1,4 @@
-package com.example.quizapp2
+package com.example.quizapp2.ViewModel
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -8,6 +8,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import com.example.quizapp2.Model.QuizObject
+import com.example.quizapp2.Model.QuizObjectDatabase
+import com.example.quizapp2.Model.QuizObjectRepository
+import com.example.quizapp2.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,7 +24,7 @@ class QuizObjectViewModel(application: Application) : AndroidViewModel(applicati
 
 
     init {
-        val database = QuizObjectDatabase.getDatabase(application)
+        val database = QuizObjectDatabase.Companion.getDatabase(application)
         repository = QuizObjectRepository(database.quizObjectDAO())
         allQuizObjects = repository.allQuizObjects
 

@@ -1,4 +1,4 @@
-package com.example.quizapp2
+package com.example.quizapp2.Model
 
 import android.content.Context
 import androidx.room.Database

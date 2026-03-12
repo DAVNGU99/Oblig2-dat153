@@ -1,4 +1,4 @@
-package com.example.quizapp2
+package com.example.quizapp2.Views
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.example.quizapp2.ViewModel.QuizObjectViewModel
 
 @Composable
 fun PlayScreen(quizViewModel : QuizObjectViewModel = viewModel()) {

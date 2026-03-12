@@ -1,4 +1,4 @@
-package com.example.quizapp2
+package com.example.quizapp2.Views
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import kotlinx.serialization.Serializable
 
 //litt som en enum + singleton
 
