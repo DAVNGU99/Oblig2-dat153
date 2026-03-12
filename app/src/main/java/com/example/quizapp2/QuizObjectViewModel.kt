@@ -1,6 +1,11 @@
 package com.example.quizapp2
 
+import android.annotation.SuppressLint
 import android.app.Application
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.CoroutineScope
@@ -27,6 +32,7 @@ class QuizObjectViewModel(application: Application) : AndroidViewModel(applicati
 
   //preSeed the application if its empty
 
+    @SuppressLint("SuspiciousIndentation")
     private fun preSeedImages(){
         coroutineScope.launch(Dispatchers.IO){
             if(repository.isEmpty()){
@@ -52,6 +58,33 @@ class QuizObjectViewModel(application: Application) : AndroidViewModel(applicati
 
     fun removeQuizObject(name: String){
         repository.deleteQuizObject(name)
+    }
+
+   //game logic for the quiz
+    var currentIndex by mutableIntStateOf(0)
+        private set
+    var quizScore by mutableIntStateOf(0)
+        private set
+    var attempts by mutableIntStateOf(0)
+        private set
+    var showResult by mutableStateOf(false)
+        private set
+    var selectedOption by mutableStateOf<String?>(null)
+        private set
+
+    fun nextRound() {
+        currentIndex++
+        showResult = false
+        selectedOption = null
+    }
+
+    fun submitAnswer(option: String) {
+        selectedOption = option
+        showResult = true
+        attempts++
+        if (option == allQuizObjects.value?.get(currentIndex % (allQuizObjects.value?.size ?: 1))?.name) {
+            quizScore++
+        }
     }
 
 

@@ -45,17 +45,17 @@ fun PlayScreen(quizViewModel : QuizObjectViewModel = viewModel()) {
 
 @Composable
 fun GameImpl(quizViewModel : QuizObjectViewModel){
-
-    var roundKey by remember { mutableIntStateOf(0) }
     val quizObjects by quizViewModel.allQuizObjects.observeAsState(emptyList())
-    var quizScore by remember { mutableIntStateOf(0) }
-    var attemps by remember {mutableIntStateOf(0)}
-    var selectedOption by remember { mutableStateOf<String?>(null) }
-    var showResult by remember { mutableStateOf(false) }
+
+
+    var quizScore = quizViewModel.quizScore
+    var selectedOption = quizViewModel.selectedOption
+    var attemps = quizViewModel.attempts
+    var showResult = quizViewModel.showResult
+
+    var roundKey = quizViewModel.currentIndex
 
     val theCorrectQuizAnswer by remember(roundKey) { mutableStateOf(quizObjects.random()) }
-
-
 
     val wrongQuizAnswers by remember(theCorrectQuizAnswer){
         mutableStateOf(
@@ -88,16 +88,12 @@ fun GameImpl(quizViewModel : QuizObjectViewModel){
             )
 
 
-            quizOptions.forEach {
-                option ->
-                Button(onClick = {
-                    selectedOption = option
-                    showResult = true
-                    attemps++
-                    if(option == theCorrectQuizAnswer.name) quizScore++
-                }, enabled = !showResult,
+            quizOptions.forEach { option ->
+                Button(
+                    onClick = { quizViewModel.submitAnswer( theCorrectQuizAnswer.name) },
+                    enabled = !showResult,
                     modifier = Modifier.fillMaxWidth()
-                ) { Text(option)}
+                ) { Text(option) }
             }
 
             if(showResult){
@@ -105,11 +101,10 @@ fun GameImpl(quizViewModel : QuizObjectViewModel){
 
                 Text(text = if (isCorrect) "Correct" else "Wrong! ${theCorrectQuizAnswer.name}" )
 
-                Button(onClick = {
-                    roundKey++
-                    showResult = false
-                    selectedOption = null
-                }) {Text("Next Round") }
+                Button(
+                    onClick = { quizViewModel.nextRound() },
+                    modifier = Modifier.fillMaxWidth()
+                ) { Text("Next Round") }
 
             }
 
