@@ -112,7 +112,7 @@ fun GameImpl(quizViewModel : QuizObjectViewModel){
                         onClick = { quizViewModel.submitAnswer(option, theCorrectQuizAnswer.name) },
                         enabled = !showResult,
                         modifier = Modifier.fillMaxWidth()
-                            .testTag("answer_$option")
+                            .testTag("answer$option")
                     ) { Text(option) }
                 }
 
@@ -124,6 +124,7 @@ fun GameImpl(quizViewModel : QuizObjectViewModel){
                     Button(
                         onClick = { quizViewModel.nextRound() },
                         modifier = Modifier.fillMaxWidth()
+                            .testTag("next_round")
                     ) { Text("Next Round") }
 
                 }

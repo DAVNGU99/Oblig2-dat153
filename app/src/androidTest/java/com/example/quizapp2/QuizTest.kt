@@ -68,6 +68,31 @@ class QuizTest {
         //First check if the score is actually 0
         composeTestRule.onNodeWithText("Score: 0 / 0")
 
+        //clicking on a button that have Zubat in it, could not find a smoother way
+        composeTestRule.onNodeWithTag("answerZubat").performClick()
+
+        //checking if it was correct
+        val wasItCorrect = try{
+            composeTestRule.onNodeWithText("Correct").assertIsDisplayed()
+            true
+        } catch (e: AssertionError){
+            false
+        }
+
+        //go to the next round
+        composeTestRule.onNodeWithTag("next_round").performClick()
+
+
+        //if true, check that if not check that...
+        if(wasItCorrect){
+            composeTestRule.onNodeWithText("Score: 1 / 1").assertIsDisplayed()
+        }else{
+            composeTestRule.onNodeWithText("Score: 0 / 1")
+        }
+
+
+
+
     }
 
 
