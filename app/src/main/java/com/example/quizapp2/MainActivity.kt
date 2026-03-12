@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -75,6 +78,7 @@ fun MainMenuScreen(){
         verticalArrangement = Arrangement.Center
     ){
         //Top text
+        ImageResourceDemo()
         Text("Welcome to the Quiz App.v2!",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
@@ -86,9 +90,18 @@ fun MainMenuScreen(){
 
         )
 
+
+
     }
 
 }
+
+@Composable
+fun ImageResourceDemo() {
+    val image: Painter = painterResource(id = R.drawable.pikapika)
+    Image(painter = image,contentDescription = "Pikachu main menu")
+}
+
 
 
 
