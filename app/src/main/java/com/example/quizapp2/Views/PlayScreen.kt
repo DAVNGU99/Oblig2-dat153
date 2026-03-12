@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -72,58 +73,64 @@ fun GameImpl(quizViewModel : QuizObjectViewModel){
 
     val quizOptions by remember (theCorrectQuizAnswer) { mutableStateOf((wrongQuizAnswers + theCorrectQuizAnswer.name)) }
 
-    Scaffold(containerColor = Color(0xFFedede9)) { padding ->
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .testTag("play_screen")
+    ) {
+        Scaffold(containerColor = Color(0xFFedede9)) { padding ->
 
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text("Quiz")
-            Text("Score: $quizScore / $attemps")
-            Button(
-                onClick = {
-                    quizViewModel.resetScore()
-                    Toast.makeText(localContext, "Score is reset", Toast.LENGTH_SHORT).show()
-
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF800000))
-            ) {Text("Reset score") }
-
-            AsyncImage(
-                model = theCorrectQuizAnswer.imageUri,
-                contentDescription = "Who is this pokemon?",
+            Column(
                 modifier = Modifier
-                    .size(200.dp)
-                    .align(Alignment.CenterHorizontally),
-                contentScale = ContentScale.Crop
-            )
-
-
-            quizOptions.forEach { option ->
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    ,
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text("Quiz")
+                Text("Score: $quizScore / $attemps")
                 Button(
-                    onClick = { quizViewModel.submitAnswer(option, theCorrectQuizAnswer.name) },
-                    enabled = !showResult,
-                    modifier = Modifier.fillMaxWidth()
-                ) { Text(option) }
+                    onClick = {
+                        quizViewModel.resetScore()
+                        Toast.makeText(localContext, "Score is reset", Toast.LENGTH_SHORT).show()
+
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF800000))
+                ) { Text("Reset score") }
+
+                AsyncImage(
+                    model = theCorrectQuizAnswer.imageUri,
+                    contentDescription = "Who is this pokemon?",
+                    modifier = Modifier
+                        .size(200.dp)
+                        .align(Alignment.CenterHorizontally),
+                    contentScale = ContentScale.Crop
+                )
+
+
+                quizOptions.forEach { option ->
+                    Button(
+                        onClick = { quizViewModel.submitAnswer(option, theCorrectQuizAnswer.name) },
+                        enabled = !showResult,
+                        modifier = Modifier.fillMaxWidth()
+                            .testTag("answer_$option")
+                    ) { Text(option) }
+                }
+
+                if (showResult) {
+                    val isCorrect = selectedOption == theCorrectQuizAnswer.name
+
+                    Text(text = if (isCorrect) "Correct" else "Wrong! ${theCorrectQuizAnswer.name}")
+
+                    Button(
+                        onClick = { quizViewModel.nextRound() },
+                        modifier = Modifier.fillMaxWidth()
+                    ) { Text("Next Round") }
+
+                }
+
+
             }
-
-            if(showResult){
-                val isCorrect = selectedOption == theCorrectQuizAnswer.name
-
-                Text(text = if (isCorrect) "Correct" else "Wrong! ${theCorrectQuizAnswer.name}" )
-
-                Button(
-                    onClick = { quizViewModel.nextRound() },
-                    modifier = Modifier.fillMaxWidth()
-                ) { Text("Next Round") }
-
-            }
-
-
-
 
         }
-
     }
-
 }

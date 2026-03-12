@@ -8,9 +8,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -38,6 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import kotlin.collections.emptyList
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import com.example.quizapp2.Model.QuizObject
 import com.example.quizapp2.ViewModel.QuizObjectViewModel
 
@@ -73,95 +76,104 @@ fun GalleryScreen(quizViewModel: QuizObjectViewModel = viewModel()) {
         }
     }
 
-    Scaffold(modifier = Modifier.background(Color(0xFFedede9)),
-        containerColor = Color(0xFFedede9),
-        topBar = {
-            TopAppBar(
-                title = { Text("Gallery") },
-                actions = {
-                    Button(onClick = {
-                        photoPicker.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .testTag("gallery_screen")  // ← move testTag here
+    ) {
+
+        Scaffold(
+            modifier =
+                Modifier.background(Color(0xFFedede9)),
+            containerColor = Color(0xFFedede9),
+            topBar = {
+                TopAppBar(
+                    title = { Text("Gallery") },
+                    actions = {
+                        Button(onClick = {
+                            photoPicker.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        }) { Text("Add") }
+                    }
+                )
+            }
+        ) { padding ->
+            LazyColumn(modifier = Modifier.padding(padding).background(Color(0xFFedede9))) {
+                items(items = quizObjects, key = { it.id }) { quizObject ->
+                    GalleryRow(
+                        quizObject = quizObject,
+                        onDelete = { quizViewModel.removeQuizObject(it.name) }
+                    )
+                }
+            }
+        }
+
+        // dialog etter du har valgt bilde
+        if (showAddDialog) {
+            AlertDialog(
+                onDismissRequest = {
+                    showAddDialog = false
+                    pendingUri = null
+                },
+                title = { Text("Add Quiz Object") },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Text("Enter a name for the selected photo.")
+                        TextField(
+                            value = nameInput,
+                            onValueChange = { nameInput = it },
+                            label = { Text("Name") },
+                            singleLine = true
                         )
-                    }) { Text("Add") }
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        enabled = pendingUri != null && nameInput.isNotBlank(),
+                        onClick = {
+                            val uri = pendingUri ?: return@Button
+                            quizViewModel.insertQuizObject(
+                                QuizObject(
+                                    name = nameInput.trim(),
+                                    imageUri = uri.toString()
+                                )
+                            )
+                            showAddDialog = false
+                            pendingUri = null
+                        }
+                    ) { Text("Add") }
+                },
+                dismissButton = {
+                    Button(onClick = {
+                        showAddDialog = false
+                        pendingUri = null
+                    }) { Text("Cancel") }
                 }
             )
         }
-    ) { padding ->
-        LazyColumn(modifier = Modifier.padding(padding).background(Color(0xFFedede9))) {
-            items(items = quizObjects, key = { it.id }) { quizObject ->
-                GalleryRow(
-                    quizObject = quizObject,
-                    onDelete = { quizViewModel.removeQuizObject(it.name) }
-                )
-            }
+    }
+}
+    @Composable
+    fun GalleryRow(
+        quizObject: QuizObject,
+        onDelete: (QuizObject) -> Unit
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+
+        ) {
+            AsyncImage(
+                model = quizObject.imageUri,
+                contentDescription = quizObject.name,
+                modifier = Modifier
+                    .size(64.dp)
+                    .clickable { onDelete(quizObject) },
+                contentScale = ContentScale.Crop
+            )
+            Spacer(Modifier.width(12.dp))
+            Text(text = quizObject.name)
         }
     }
-
-    // dialog etter du har valgt bilde
-    if (showAddDialog) {
-        AlertDialog(
-            onDismissRequest = {
-                showAddDialog = false
-                pendingUri = null
-            },
-            title = { Text("Add Quiz Object") },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text("Enter a name for the selected photo.")
-                    TextField(
-                        value = nameInput,
-                        onValueChange = { nameInput = it },
-                        label = { Text("Name") },
-                        singleLine = true
-                    )
-                }
-            },
-            confirmButton = {
-                Button(
-                    enabled = pendingUri != null && nameInput.isNotBlank(),
-                    onClick = {
-                        val uri = pendingUri ?: return@Button
-                        quizViewModel.insertQuizObject(
-                            QuizObject(
-                                name = nameInput.trim(),
-                                imageUri = uri.toString()
-                            )
-                        )
-                        showAddDialog = false
-                        pendingUri = null
-                    }
-                ) { Text("Add") }
-            },
-            dismissButton = {
-                Button(onClick = {
-                    showAddDialog = false
-                    pendingUri = null
-                }) { Text("Cancel") }
-            }
-        )
-    }
-}
-@Composable
-fun GalleryRow(
-    quizObject: QuizObject,
-    onDelete: (QuizObject) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp)
-
-    ) {
-        AsyncImage(
-            model = quizObject.imageUri,
-            contentDescription = quizObject.name,
-            modifier = Modifier
-                .size(64.dp)
-                .clickable { onDelete(quizObject) },
-            contentScale = ContentScale.Crop
-        )
-        Spacer(Modifier.width(12.dp))
-        Text(text = quizObject.name)
-    }
-}
