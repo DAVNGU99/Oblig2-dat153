@@ -1,6 +1,5 @@
 package com.example.quizapp2
-import androidx.compose.foundation.Image
-import androidx.compose.runtime.setValue
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,19 +9,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -34,7 +33,9 @@ fun PlayScreen(quizViewModel : QuizObjectViewModel = viewModel()) {
     val quizObjects by quizViewModel.allQuizObjects.observeAsState(emptyList())
 
     if (quizObjects.size < 3) {
-        Box(modifier = Modifier.fillMaxSize().background(Color(0xFFedede9)), contentAlignment = Alignment.Center) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFedede9)), contentAlignment = Alignment.Center) {
             Text("You need at least 3 objects in your gallery to play!")
         }
     } else {
@@ -46,14 +47,15 @@ fun PlayScreen(quizViewModel : QuizObjectViewModel = viewModel()) {
 @Composable
 fun GameImpl(quizViewModel : QuizObjectViewModel){
     val quizObjects by quizViewModel.allQuizObjects.observeAsState(emptyList())
+//needed for the toast
+    val localContext = LocalContext.current
 
+    val quizScore = quizViewModel.quizScore
+    val selectedOption = quizViewModel.selectedOption
+    val attemps = quizViewModel.attempts
+    val showResult = quizViewModel.showResult
 
-    var quizScore = quizViewModel.quizScore
-    var selectedOption = quizViewModel.selectedOption
-    var attemps = quizViewModel.attempts
-    var showResult = quizViewModel.showResult
-
-    var roundKey = quizViewModel.currentIndex
+    val roundKey = quizViewModel.currentIndex
 
     val theCorrectQuizAnswer by remember(roundKey) { mutableStateOf(quizObjects.random()) }
 
@@ -67,7 +69,7 @@ fun GameImpl(quizViewModel : QuizObjectViewModel){
         )
     }
 
-    val quizOptions by remember { mutableStateOf((wrongQuizAnswers + theCorrectQuizAnswer.name)) };
+    val quizOptions by remember (theCorrectQuizAnswer) { mutableStateOf((wrongQuizAnswers + theCorrectQuizAnswer.name)) }
 
     Scaffold(containerColor = Color(0xFFedede9)) { padding ->
 
@@ -77,6 +79,14 @@ fun GameImpl(quizViewModel : QuizObjectViewModel){
             verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("Quiz")
             Text("Score: $quizScore / $attemps")
+            Button(
+                onClick = {
+                    quizViewModel.resetScore()
+                    Toast.makeText(localContext, "Score is reset", Toast.LENGTH_SHORT).show()
+
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF800000))
+            ) {Text("Reset score") }
 
             AsyncImage(
                 model = theCorrectQuizAnswer.imageUri,
@@ -90,7 +100,7 @@ fun GameImpl(quizViewModel : QuizObjectViewModel){
 
             quizOptions.forEach { option ->
                 Button(
-                    onClick = { quizViewModel.submitAnswer( theCorrectQuizAnswer.name) },
+                    onClick = { quizViewModel.submitAnswer(option, theCorrectQuizAnswer.name) },
                     enabled = !showResult,
                     modifier = Modifier.fillMaxWidth()
                 ) { Text(option) }

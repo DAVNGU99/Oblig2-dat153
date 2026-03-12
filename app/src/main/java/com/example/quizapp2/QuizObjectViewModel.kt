@@ -41,6 +41,8 @@ class QuizObjectViewModel(application: Application) : AndroidViewModel(applicati
                 QuizObject(name = "Ekans", imageUri = getDrawableUri(R.drawable.ekans)),
                 QuizObject(name = "Zubat", imageUri = getDrawableUri(R.drawable.zubat))
                 )
+
+
                 defaultImages.forEach { quizObject -> repository.insertQuizObject(quizObject) }
             }
 
@@ -78,14 +80,16 @@ class QuizObjectViewModel(application: Application) : AndroidViewModel(applicati
         selectedOption = null
     }
 
-    fun submitAnswer(option: String) {
+    fun submitAnswer(option: String, correctAnswer: String) {
         selectedOption = option
         showResult = true
         attempts++
-        if (option == allQuizObjects.value?.get(currentIndex % (allQuizObjects.value?.size ?: 1))?.name) {
-            quizScore++
-        }
+        if (option == correctAnswer) quizScore++
     }
 
+    fun resetScore(){
+        quizScore = 0
+        attempts = 0
+    }
 
 }
