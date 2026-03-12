@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(entities = [QuizObject::class], version = 1)
 abstract class QuizObjectDatabase : RoomDatabase() {
@@ -17,11 +18,17 @@ abstract class QuizObjectDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     QuizObjectDatabase::class.java,
-                    "quiz_database"  // this becomes the actual SQLite filename
+                    "quiz_database"
                 ).build()
                 INSTANCE = instance
                 instance
             }
         }
+
+        // add this new function
+        fun getReadableDb(context: Context): SupportSQLiteDatabase {
+            return getDatabase(context).openHelper.readableDatabase
+        }
     }
+
 }
